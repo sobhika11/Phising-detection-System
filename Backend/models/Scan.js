@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const scanSchema = new mongoose.Schema({
   type: { type: String, default: 'url' },
   input: { type: String, required: true },
