@@ -1,7 +1,5 @@
 const express = require('express');
 const router  = express.Router();
-
-// In-memory scan log (resets on server restart; replace with MongoDB for persistence)
 const scanLog = [];
 
 router.post('/record', (req, res) => {

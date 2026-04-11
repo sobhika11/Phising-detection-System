@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    @apply font-sans bg-white text-gray-800;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-cyber-600 hover:bg-cyber-700 text-white font-semibold px-6 py-3 rounded-xl
+           transition-all duration-200 shadow-md hover:shadow-cyber-500/30 hover:shadow-lg
+           active:scale-95 flex items-center gap-2;
+  }
+  .btn-secondary {
+    @apply border-2 border-cyber-600 text-cyber-600 hover:bg-cyber-600 hover:text-white
+           font-semibold px-6 py-3 rounded-xl transition-all duration-200
+           active:scale-95 flex items-center gap-2;
+  }
+  .card {
+    @apply bg-white rounded-2xl shadow-md border border-blue-100 p-6;
+  }
+  .card-blue {
+    @apply bg-cyber-50 rounded-2xl border border-cyber-100 p-6;
+  }
+  .input-field {
+    @apply w-full border-2 border-blue-200 rounded-xl px-4 py-3 text-gray-800
+           focus:outline-none focus:border-cyber-500 focus:ring-2 focus:ring-cyber-500/20
+           placeholder-gray-400 transition-all duration-200;
+  }
+  .section-title {
+    @apply text-3xl font-bold text-navy-900 mb-2;
+  }
+  .section-subtitle {
+    @apply text-gray-500 mb-8;
+  }
+  .risk-low {
+    @apply bg-emerald-50 border border-emerald-200 text-emerald-800;
+  }
+  .risk-medium {
+    @apply bg-amber-50 border border-amber-200 text-amber-800;
+  }
+  .risk-high {
+    @apply bg-red-50 border border-red-200 text-red-800;
+  }
+  .nav-link {
+    @apply text-blue-100 hover:text-white font-medium transition-colors duration-200
+           relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5
+           after:bg-white after:transition-all after:duration-200 hover:after:w-full;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-cyber-400 to-blue-300 bg-clip-text text-transparent;
+  }
+  .glow-blue {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+  }
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  .animate-slide-up {
+    animation: slideUp 0.4s ease-out;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 3px; }
+
+/* Progress bar animation */
+@keyframes fillBar {
+  from { width: 0%; }
+  to { width: var(--target-width); }
+}
+.fill-bar {
+  animation: fillBar 1s ease-out forwards;
+}
