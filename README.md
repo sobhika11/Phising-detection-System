@@ -1,16 +1,27 @@
-# 🛡️ PhishGuard — Phishing Detection & Awareness Platform
+🛡️ Phishing Detection System
 
-> An educational, real-time phishing detection system that analyses URLs and emails for phishing indicators, educates users about cybersecurity threats, and tests awareness through an interactive quiz.
+A lightweight phishing detection system that analyzes URLs and text using rule-based feature extraction and weighted scoring.
 
----
+🚀 Features
+URL analysis (HTTPS, IP address, subdomains, length)
+Suspicious keyword detection
+Risk scoring (Low / Medium / High)
+Explanation for why input is flagged
+⚙️ How It Works
+Input → Feature Extraction → Scoring → Classification → Explanation
+🛠️ Tech Stack
+JavaScript
+Node.js
+Regex
+📌 Example
 
-## 🌐 Live Demo
+Input:
+http://192.168.0.1/login
 
-| Service | URL |
-|---|---|
-| **Backend API** | https://phising-detection-system.onrender.com |
-| **Frontend** | *(deploy as Render Static Site — see below)* |
+Output:
+High Risk
 
+<<<<<<< HEAD
 ---
 
 ## ✨ Features
@@ -83,6 +94,15 @@ Every scan shows:
 | Backend | Node.js + Express 4 |
 | Env | dotenv |
 
+## 🏢 Enterprise Analyst Workflow (SOC Console)
+Recently upgraded to support a professional Security Operations Center (SOC) workflow, adding advanced features designed for incident responders:
+
+- **Graph-Based Neighborhood Alert:** Integrates Neo4j to map relationships between scanned URLs and their hosting IP addresses, automatically warning analysts if an entered domain shares infrastructure with known malicious campaigns.
+- **Automated Takedown Checklists:** Generates ready-to-send abuse desk takedown requests when a high-risk URL is detected, including predicted hosting provider contacts and formatted technical indicators.
+- **Headless Sanitized View:** Utilizes a hardened, sandboxed Puppeteer instance to fetch a visual screenshot of malicious domains, allowing analysts to inspect the threat without direct exposure to browser exploits.
+- **Exportable Threat Intelligence PDFs:** Features a professional, 1-click PDF export using jsPDF, compiling the risk score, feature breakdown, graph context, and visual snapshot into a standardized threat report.
+- **Searchable Threat Network Map:** A dynamic, React Force-Graph dashboard that fetches relational threat data via parametrized Neo4j queries, featuring debounced searching, risk-score filtering, and a clear empty-state UI.
+
 ---
 
 ## 📁 Project Structure
@@ -93,7 +113,12 @@ phising-detection-system/
 │   ├── Routes/
 │   │   ├── url-checker.js     # URL heuristic detection API
 │   │   ├── email-checker.js   # Email heuristic detection API
+│   │   ├── graphView.js       # Neo4j Threat Map Data API
 │   │   └── stats.js           # Scan stats recording API
+│   ├── services/
+│   │   ├── neo4jService.js      # Neighborhood alert relationship queries
+│   │   ├── screenshotService.js # Headless Puppeteer scanning
+│   │   └── takedownService.js   # Abuse email generator
 │   ├── server.js              # Express entry point
 │   ├── .env                   # Environment variables (not committed)
 │   └── package.json
@@ -104,17 +129,19 @@ phising-detection-system/
         │   ├── components/
         │   │   ├── Navbar.jsx
         │   │   ├── Footer.jsx
-        │   │   └── ResultCard.jsx
+        │   │   ├── ResultCard.jsx
+        │   │   └── GraphView.jsx      # Threat Intel Network Dashboard 
         │   ├── pages/
         │   │   ├── HomePage.jsx
-        │   │   ├── URLAnalyzer.jsx
+        │   │   ├── URLAnalyzer.jsx    # SOC Analyst Console
         │   │   ├── EmailAnalyzer.jsx
         │   │   ├── Awareness.jsx
         │   │   ├── Quiz.jsx
         │   │   └── Dashboard.jsx
         │   ├── utils/
         │   │   ├── urlAnalyzer.js     # URL scoring logic
-        │   │   └── emailAnalyzer.js   # Email scoring logic
+        │   │   ├── emailAnalyzer.js   # Email scoring logic
+        │   │   └── pdfGenerator.js    # Threat Report PDF builder
         │   ├── App.jsx
         │   └── main.jsx
         ├── vite.config.js
@@ -197,3 +224,8 @@ CORS_ORIGIN=https://your-frontend.onrender.com
 ## 📄 License
 
 MIT — free to use, modify, and distribute for educational purposes.
+=======
+Uses IP address
+No HTTPS
+Contains suspicious keywords
+>>>>>>> 9b9d6b69604be2c1d25c69fdff186d848024f7cd
