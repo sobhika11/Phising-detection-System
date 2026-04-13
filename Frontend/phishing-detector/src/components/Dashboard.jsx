@@ -41,8 +41,6 @@ const Dashboard = () => {
               </p>
             </div>
           </div>
-          
-          {/* Our Graph Component */}
           <div className="rounded-xl overflow-hidden border border-slate-100 bg-slate-900">
             <GraphView />
           </div>
