@@ -36,8 +36,6 @@ export default function Footer() {
               ))}
             </ul>
           </div>
-
-          {/* Disclaimer */}
           <div>
             <h3 className="text-white font-semibold mb-3">Disclaimer</h3>
             <p className="text-sm text-blue-300 leading-relaxed">

@@ -12,7 +12,6 @@ const GraphView = () => {
   
   // Ref for debouncing
   const timeoutRef = useRef(null);
-
   const fetchGraph = useCallback(async (query, score) => {
     setLoading(true);
     setError(null);
@@ -42,7 +41,6 @@ const GraphView = () => {
   const handleSearchChange = (e) => {
     const val = e.target.value;
     setSearch(val);
-    
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
       fetchGraph(val, minScore);
