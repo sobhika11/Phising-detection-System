@@ -1,5 +1,4 @@
 import { ShieldCheck, ShieldAlert, ShieldX, AlertTriangle } from 'lucide-react'
-
 const CONFIG = {
   low:    { label: 'Low Risk',    color: 'text-emerald-600', bg: 'bg-emerald-50',   border: 'border-emerald-200', bar: 'bg-emerald-500', Icon: ShieldCheck },
   medium: { label: 'Medium Risk', color: 'text-amber-600',   bg: 'bg-amber-50',     border: 'border-amber-200',   bar: 'bg-amber-500',   Icon: ShieldAlert },
@@ -8,7 +7,6 @@ const CONFIG = {
 
 export default function ResultCard({ score, risk, findings, extra }) {
   const cfg = CONFIG[risk] || CONFIG.low
-
   return (
     <div className={`rounded-2xl border-2 ${cfg.border} ${cfg.bg} p-6 animate-slide-up`}>
       {/* Header */}
@@ -28,7 +26,6 @@ export default function ResultCard({ score, risk, findings, extra }) {
         </div>
       </div>
 
-      {/* Score bar */}
       <div className="mb-5">
         <div className="h-3 w-full bg-gray-200 rounded-full overflow-hidden">
           <div

@@ -17,9 +17,7 @@ const ThreatMap = ({ initialUrl }) => {
     setGraphData(initialData);
 
     // 2. Connect to WebSocket for real-time updates (Socket.io)
-    // Assuming backend is running on process.env.VITE_BACKEND_URL or localhost
     const socket = io(import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000');
-
     socket.on('connect', () => {
       console.log('Connected to SecureInc Threat Intel Feed');
       // Ask backend to start investigating
