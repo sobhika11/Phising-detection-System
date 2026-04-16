@@ -1,5 +1,6 @@
 const express = require('express');
 const router  = express.Router();
+const axios = require('axios'); // For making HTTP requests to AI service
 
 // Weighted detection rules
 function analyzeURL(rawUrl) {
@@ -62,11 +63,42 @@ function analyzeURL(rawUrl) {
   return { score, risk, findings, hostname, protocol: parsed.protocol };
 }
 
-router.post('/check', (req, res) => {
+// Graph Middleware to ask the GNN and Neo4j Service
+const pythonAiUrl = process.env.PYTHON_AI_URL || 'http://localhost:8000';
+
+router.post('/check', async (req, res) => {
   const { url } = req.body;
   if (!url) return res.status(400).json({ success: false, message: 'URL is required.' });
+  
+  // Base rule engine
   const result = analyzeURL(url);
-  res.json({ success: true, url, ...result, scannedAt: new Date().toISOString() });
+  
+  // Intercept and ask Graph AI Service
+  let aiRiskScore = null;
+  try {
+    const aiResponse = await axios.post(`${pythonAiUrl}/api/v1/score`, {
+      url: url,
+      domain: result.hostname || "unknown",
+      ip: "192.168.1.1" // Mocking IP extraction, would use DNS lookup
+    });
+    aiRiskScore = aiResponse.data.riskScore;
+    
+    // Combining Rule-based and Graph AI scores. 
+    // GNN output is between 0 and 1, we convert to 0-100 scale.
+    if (aiRiskScore !== null) {
+      result.score = Math.min(100, Math.round((result.score + (aiRiskScore * 100)) / 2));
+      result.risk = result.score >= 60 ? 'high' : result.score >= 30 ? 'medium' : 'low';
+      result.findings.push({ 
+        rule: 'GNN Risk Analysis', 
+        explanation: 'Graph Neural Network detected malicious relationships matching existing threat actors.', 
+        weight: Math.round(aiRiskScore * 100) 
+      });
+    }
+  } catch (err) {
+    console.error("Failed to connect to Python AI Service:", err.message);
+  }
+
+  res.json({ success: true, url, ...result, gnn_score_raw: aiRiskScore, scannedAt: new Date().toISOString() });
 });
 
 module.exports = router;

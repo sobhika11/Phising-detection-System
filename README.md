@@ -177,9 +177,11 @@ CORS_ORIGIN=https://your-frontend.onrender.com
 ### Frontend — Static Site
 | Field | Value |
 |---|---|
-| Root Directory | `Frontend/phishing-detector` |
-| Build Command | `npm install && npm run build` |
-| Publish Directory | `dist` |
+| **Root Directory** | *(leave empty)* |
+| **Build Command** | `cd Frontend/phishing-detector && npm install && npm run build` |
+| **Publish Directory** | `Frontend/phishing-detector/dist` |
+
+> ⚠️ Use `npm run build` — NOT `npm run dev`. The dev server cannot be used for static deployment.
 
 ---
 
