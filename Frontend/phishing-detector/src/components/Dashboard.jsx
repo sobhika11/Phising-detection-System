@@ -28,7 +28,7 @@ const Dashboard = () => {
             <p className="text-2xl font-bold text-blue-600">856</p>
           </div>
         </div>
-
+        
         {/* The Graph Intelligence Section */}
         <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
           <div className="flex items-center justify-between mb-6">
