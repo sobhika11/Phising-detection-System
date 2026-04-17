@@ -11,7 +11,6 @@ const TIPS = [
   { title: 'Keep software updated', desc: 'Phishing attacks often exploit vulnerabilities in outdated software. Regular updates patch these security holes.' },
   { title: 'Report suspected phishing', desc: 'Forward phishing emails to your IT department, or report them to organisations like reportphishing@apwg.org or the Anti-Phishing Working Group.' },
 ]
-
 const EXAMPLES = [
   {
     label: 'Real email',

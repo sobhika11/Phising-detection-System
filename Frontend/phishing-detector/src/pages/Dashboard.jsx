@@ -8,14 +8,12 @@ const COLORS = { low: '#10b981', medium: '#f59e0b', high: '#ef4444' }
 function riskLabel(r) {
   return r === 'high' ? 'High' : r === 'medium' ? 'Medium' : 'Low'
 }
-
 function timeAgo(ts) {
   const sec = Math.floor((Date.now() - new Date(ts).getTime()) / 1000)
   if (sec < 60) return `${sec}s ago`
   if (sec < 3600) return `${Math.floor(sec/60)}m ago`
   return `${Math.floor(sec/3600)}h ago`
 }
-
 const ORCHESTRATOR_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 
 export default function Dashboard() {
