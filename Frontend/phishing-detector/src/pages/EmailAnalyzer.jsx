@@ -39,6 +39,7 @@ James`
 export default function EmailAnalyzer() {
   const [text, setText]     = useState('')
   const [result, setResult] = useState(null)
+  
   const [loading, setLoading] = useState(false)
 
   function handleAnalyse(e) {

@@ -8,7 +8,6 @@ const features = [
   { icon: HelpCircle, color: 'bg-amber-100 text-amber-600',  title: 'Quiz',            desc: 'Test your phishing detection skills with our interactive quiz and earn your score.', to: '/quiz' },
   { icon: BarChart2,  color: 'bg-red-100 text-red-600',      title: 'Dashboard',       desc: 'View aggregate scan statistics and risk-level distribution with live charts.', to: '/dashboard' },
 ]
-
 const stats = [
   { value: '3.4B', label: 'Phishing emails sent daily' },
   { value: '36%',  label: 'Breaches involve phishing' },
