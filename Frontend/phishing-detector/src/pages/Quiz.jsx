@@ -86,6 +86,7 @@ const QUESTIONS = [
     correct: 1,
     explanation: 'Quick action limits damage. Changing passwords prevents account takeover, a malware scan catches any downloaded malware, and notifying proper parties lets them monitor and help.',
   },
+  
   {
     id: 8,
     question: 'What is "spear phishing"?',

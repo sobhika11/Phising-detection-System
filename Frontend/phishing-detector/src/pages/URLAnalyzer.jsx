@@ -17,6 +17,7 @@ export default function URLAnalyzer() {
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError]     = useState('')
+  
   const [downloading, setDownloading] = useState(false)
   const [copyFeedback, setCopyFeedback] = useState('')
 
