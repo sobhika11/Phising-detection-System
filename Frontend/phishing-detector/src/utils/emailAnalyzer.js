@@ -41,7 +41,6 @@ function detectGrammarIssues(text) {
   if (avgLen < 3 && words.length > 10) issues.push('unusually short average word length (possible garbled text)')
   return issues
 }
-
 export function analyzeEmail(text) {
   if (!text || text.trim().length < 10) {
     return { score: 0, risk: 'low', findings: [], wordCount: 0 }

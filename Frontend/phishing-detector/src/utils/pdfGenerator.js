@@ -16,6 +16,7 @@ export const generatePDFReport = (result) => {
     [5, 150, 105];
 
   // Header
+  
   doc.setFillColor(...primaryColor);
   doc.rect(0, 0, 210, 40, 'F');
   doc.setTextColor(255, 255, 255);
