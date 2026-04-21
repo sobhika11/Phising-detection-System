@@ -5,8 +5,6 @@ export function analyzeURL(rawUrl) {
   const findings = []
   let score = 0
   let url = rawUrl.trim()
-
-  // Normalise
   const hasProtocol = /^https?:\/\//i.test(url)
   const fullUrl = hasProtocol ? url : 'http://' + url
 
@@ -16,6 +14,8 @@ export function analyzeURL(rawUrl) {
   } catch {
     return { score: 100, risk: 'high', findings: [{ rule: 'Invalid URL', explanation: 'The URL could not be parsed — this is suspicious.', weight: 100 }] }
   }
+
+
 
   const hostname = parsed.hostname
   const pathname = parsed.pathname
