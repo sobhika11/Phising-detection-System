@@ -21,7 +21,6 @@ export default function App() {
           <Route path="/awareness" element={<Awareness />} />
           <Route path="/quiz" element={<Quiz />} />
           <Route path="/api/v1/graph/network" element={<GraphView/>}/>
-          {/* This is now the "Command Center" where the Graph lives */}
           <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </main>
