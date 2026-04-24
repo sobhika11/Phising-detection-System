@@ -8,6 +8,7 @@ class GeoLocation(BaseModel):
     region: str | None = None
     city: str | None = None
 
+
 class Infrastructure(BaseModel):
     domain: str
     ip: str | None = None
