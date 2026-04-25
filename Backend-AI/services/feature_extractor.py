@@ -35,6 +35,8 @@ def extract_features(url: str) -> Features:
     
     typo, brand = check_typosquatting(domain)
 
+
+
     return Features(
         length=length,
         digitCount=digitCount,

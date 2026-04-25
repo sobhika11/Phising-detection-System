@@ -55,6 +55,8 @@ async def check_infrastructure(url: str) -> Infrastructure:
         except Exception:
             pass # Fail gracefully if API is down
 
+
+
     return Infrastructure(
         domain=domain,
         ip=ip_address,
