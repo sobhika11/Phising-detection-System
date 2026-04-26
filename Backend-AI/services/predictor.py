@@ -76,5 +76,6 @@ def predict_phishing(features: Features, infrastructure: Infrastructure) -> tupl
         verdict = "Suspicious"
     else:
         verdict = "Safe"
+      
         
     return round(score, 2), verdict, model_used
