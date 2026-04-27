@@ -49,6 +49,7 @@ async def capture_screenshot(url: str):
                 "error": None
             }
 
+
     except Exception as e:
         return {
             "available": False,
