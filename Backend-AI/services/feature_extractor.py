@@ -3,7 +3,6 @@ from urllib.parse import urlparse
 import tldextract
 from utils.helpers import calculate_entropy, check_typosquatting, SUSPICIOUS_TLDS
 from models.request_models import Features
-
 def extract_features(url: str) -> Features:
     """
     Extracts phishing-specific features from a given URL.
@@ -34,9 +33,7 @@ def extract_features(url: str) -> Features:
     suspiciousTLD = tld in SUSPICIOUS_TLDS
     
     typo, brand = check_typosquatting(domain)
-
-
-
+    
     return Features(
         length=length,
         digitCount=digitCount,
