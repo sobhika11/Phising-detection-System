@@ -41,6 +41,8 @@ router.get('/network', async (req, res) => { // Tip: If using this in server.js 
       const ip = record.get('ip');
       const score = record.get('score');
 
+      
+
       if (!nodeIds.has(url)) {
         nodes.push({ id: url, type: 'URL', score: score });
         nodeIds.add(url);

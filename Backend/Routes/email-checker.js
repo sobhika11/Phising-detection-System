@@ -8,7 +8,6 @@ function analyzeEmail(text) {
   const lower    = text.toLowerCase();
   const findings = [];
   let score      = 0;
-
   const urgencyMatches = URGENCY_KEYWORDS.filter(k => lower.includes(k));
   if (urgencyMatches.length) {
     const w = Math.min(urgencyMatches.length * 8, 30);
