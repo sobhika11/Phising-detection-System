@@ -27,6 +27,10 @@ export default function URLAnalyzer() {
   }
 
   const handleDownload = async () => {
+    if (!result) {
+      alert('No analysis result to generate report.');
+      return;
+    }
     setDownloading(true);
     try {
       // Dynamic import to keep initial bundle size smaller
