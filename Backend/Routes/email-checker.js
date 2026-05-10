@@ -1,11 +1,9 @@
 const express = require('express');
 const router  = express.Router();
-
 const URGENCY_KEYWORDS   = ['urgent','immediately','verify','update','suspend','suspended','expire','expires','expired','confirm','action required','click here','limited time','act now','your account','unusual activity','unauthorized','security alert','reset your password','validate','blocked'];
 const THREAT_KEYWORDS    = ['prize','winner','congratulations','selected','lottery','free gift','million dollars','bank transfer','inheritance','wire transfer','bitcoin','crypto','investment opportunity','double your money'];
 const CREDENTIAL_KEYWORDS= ['enter your password','enter your card','provide your ssn','social security','credit card number','bank account','routing number','cvv','pin number'];
 const BRANDS             = ['paypal','amazon','apple','google','microsoft','netflix','facebook','irs','bank of america','chase','wells fargo','dhl','fedex','ups'];
-
 function analyzeEmail(text) {
   const lower    = text.toLowerCase();
   const findings = [];
@@ -47,7 +45,6 @@ function analyzeEmail(text) {
     score += 8;
     findings.push({ rule: 'Formatting Anomalies', explanation: 'Excessive caps or punctuation detected.', weight: 8 });
   }
-
   if (/(dear (customer|user|member|friend)|to whom it may concern)/i.test(text)) {
     score += 8;
     findings.push({ rule: 'Generic Greeting', explanation: 'Non-personalised greeting used.', weight: 8 });
