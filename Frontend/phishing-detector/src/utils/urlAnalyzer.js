@@ -88,5 +88,46 @@ export function analyzeURL(rawUrl) {
   score = Math.min(score, 100)
   const risk = score >= 60 ? 'high' : score >= 30 ? 'medium' : 'low'
 
-  return { score, risk, findings, hostname, protocol: parsed.protocol }
+  // Mock Graph AI Neighborhood Alert (Simulating Backend response)
+  // In production, this data comes from the new Neo4j service.
+  const isHighRiskSimulated = risk === 'high' || rawUrl.includes('192.168.1.1');
+  const neighborhoodAlert = isHighRiskSimulated ? {
+    ip: '192.168.1.1',
+    riskyNeighborCount: 4,
+    riskyNeighbors: ['paypal-secure-update.xyz', 'amaz0n-account.verify.com', 'login-apple-support.tk', '192.168.1.1/phish'],
+    message: 'Warning: This URL is hosted on an IP associated with 4 known high-risk/phishing campaigns.'
+  } : {
+    ip: '104.18.27.44', // Generic mock safe IP
+    riskyNeighborCount: 0,
+    riskyNeighbors: [],
+    message: 'Safe neighborhood. No high-risk domains found on this IP.'
+  };
+
+  // Mock Sanitized View (Simulating Headless Browser Backend response)
+  const isAvailable = risk !== 'high';
+  const sanitizedView = {
+    available: isAvailable,
+    imageUrl: isAvailable ? 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MDAiIGhlaWdodD0iNjAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmMzE1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzU1NSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+TW9jayBTYW5pdGl6ZWQgVmlldzwvdGV4dD48L3N2Zz4=' : null,
+    error: isAvailable ? null : 'Unable to safely reach the destination or domain blocked the request.'
+  };
+
+  // Mock Incident Response Takedown Data
+  const takedownBody = `To the Abuse Desk,
+
+Incident Details:
+Target URL: ${url}
+Hosting IP: 192.168.1.1
+Detection Time: ${new Date().toISOString()}
+Risk Score: ${score}/100
+
+Please review the provided URL immediately and suspend the hosting account.`;
+
+  const nextSteps = {
+    show: risk === 'high',
+    abuseEmail: 'abuse@mock-hosting.com',
+    takedownSubject: `URGENT: Takedown Request - Phishing Content [192.168.1.1]`,
+    takedownBody
+  };
+
+  return { score, risk, findings, hostname, protocol: parsed.protocol, neighborhoodAlert, sanitizedView, nextSteps }
 }

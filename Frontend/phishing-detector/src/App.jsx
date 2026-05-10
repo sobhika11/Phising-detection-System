@@ -7,10 +7,11 @@ import EmailAnalyzer from './pages/EmailAnalyzer'
 import Awareness from './pages/Awareness'
 import Quiz from './pages/Quiz'
 import Dashboard from './pages/Dashboard'
+import GraphView from './components/GraphView'
 
 export default function App() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-slate-50">
       <Navbar />
       <main className="flex-1">
         <Routes>
@@ -19,6 +20,8 @@ export default function App() {
           <Route path="/email-analyzer" element={<EmailAnalyzer />} />
           <Route path="/awareness" element={<Awareness />} />
           <Route path="/quiz" element={<Quiz />} />
+          <Route path="/api/v1/graph/network" element={<GraphView/>}/>
+          {/* This is now the "Command Center" where the Graph lives */}
           <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </main>

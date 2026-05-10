@@ -75,13 +75,25 @@ router.post('/check', async (req, res) => {
   
   // Intercept and ask Graph AI Service
   let aiRiskScore = null;
+  let ip = "unknown";
+  let sanitizedView = { available: false, error: "AI backend indisposed." };
+
   try {
-    const aiResponse = await axios.post(`${pythonAiUrl}/api/v1/score`, {
-      url: url,
-      domain: result.hostname || "unknown",
-      ip: "192.168.1.1" // Mocking IP extraction, would use DNS lookup
+    const aiResponse = await axios.post(`${pythonAiUrl}/predict`, {
+      url: url
     });
-    aiRiskScore = aiResponse.data.riskScore;
+    
+    // Deconstruct newly available advanced AI data
+    const aiData = aiResponse.data;
+    aiRiskScore = aiData.riskScore;
+    
+    if (aiData.infrastructure && aiData.infrastructure.ip) {
+       ip = aiData.infrastructure.ip;
+    }
+    
+    if (aiData.sanitizedView) {
+       sanitizedView = aiData.sanitizedView;
+    }
     
     // Combining Rule-based and Graph AI scores. 
     // GNN output is between 0 and 1, we convert to 0-100 scale.
@@ -89,8 +101,8 @@ router.post('/check', async (req, res) => {
       result.score = Math.min(100, Math.round((result.score + (aiRiskScore * 100)) / 2));
       result.risk = result.score >= 60 ? 'high' : result.score >= 30 ? 'medium' : 'low';
       result.findings.push({ 
-        rule: 'GNN Risk Analysis', 
-        explanation: 'Graph Neural Network detected malicious relationships matching existing threat actors.', 
+        rule: 'AI Risk Analysis', 
+        explanation: `AI model (${aiData.modelUsed}) concluded a ${aiData.verdict} verdict based on infrastructural and heuristic features.`, 
         weight: Math.round(aiRiskScore * 100) 
       });
     }
@@ -98,7 +110,22 @@ router.post('/check', async (req, res) => {
     console.error("Failed to connect to Python AI Service:", err.message);
   }
 
-  res.json({ success: true, url, ...result, gnn_score_raw: aiRiskScore, scannedAt: new Date().toISOString() });
+  // Fetch Neighborhood Alert for the hosted IP
+  let neighborhoodAlert = null;
+  if (ip !== "unknown") {
+    try {
+      const { getNeighborhoodAlert } = require('../services/neo4jService');
+      neighborhoodAlert = await getNeighborhoodAlert(ip, url);
+    } catch (err) {
+      console.error("Failed to load or execute neighborhood alert service:", err.message);
+    }
+  }
+
+  // Generate Incident Response Takedown steps if malicious
+  const { generateTakedownData } = require('../services/takedownService');
+  const nextSteps = generateTakedownData(url, ip, result.score, result.findings);
+
+  res.json({ success: true, url, ...result, gnn_score_raw: aiRiskScore, neighborhoodAlert, sanitizedView, nextSteps, scannedAt: new Date().toISOString() });
 });
 
 module.exports = router;

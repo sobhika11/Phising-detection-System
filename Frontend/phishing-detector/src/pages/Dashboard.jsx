@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import axios from 'axios'
 import { BarChart2, ShieldX, ShieldAlert, ShieldCheck, Link2, Mail, Clock, Trash2 } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts'
 
@@ -9,33 +10,40 @@ function riskLabel(r) {
 }
 
 function timeAgo(ts) {
-  const sec = Math.floor((Date.now() - ts) / 1000)
+  const sec = Math.floor((Date.now() - new Date(ts).getTime()) / 1000)
   if (sec < 60) return `${sec}s ago`
   if (sec < 3600) return `${Math.floor(sec/60)}m ago`
   return `${Math.floor(sec/3600)}h ago`
 }
 
+const ORCHESTRATOR_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+
 export default function Dashboard() {
-  const [history, setHistory] = useState([])
+  const [summary, setSummary] = useState(null)
 
   useEffect(() => {
-    const raw = JSON.parse(localStorage.getItem('scanHistory') || '[]')
-    setHistory(raw)
+    const fetchStats = async () => {
+      try {
+        const response = await axios.get(`${ORCHESTRATOR_URL}/api/v1/stats/summary`);
+        setSummary(response.data);
+      } catch (err) {
+         console.error("Dashboard failed to fetch live DB tracking:", err);
+      }
+    };
+    fetchStats();
   }, [])
 
   function clearHistory() {
-    localStorage.removeItem('scanHistory')
-    setHistory([])
+    // Left as placeholder, would require a backend DELETE route
+    alert("History clearing must be implemented via backend API");
   }
 
-  // Stats
-  const total  = history.length
-  const high   = history.filter(h => h.risk === 'high').length
-  const medium = history.filter(h => h.risk === 'medium').length
-  const low    = history.filter(h => h.risk === 'low').length
-  const urlScans   = history.filter(h => h.type === 'url').length
-  const emailScans = history.filter(h => h.type === 'email').length
-  const avgScore   = total ? Math.round(history.reduce((s,h) => s+h.score, 0) / total) : 0
+  if (!summary) return <div className="min-h-screen p-10 text-center animate-pulse text-gray-500">Loading live Audit Logs...</div>;
+
+  // Stats mapped from backend
+  const { total = 0, high = 0, medium = 0, low = 0, avgScore = 0, recent: history = [] } = summary || {};
+  const urlScans   = history.filter(h => h.type === 'url').length;
+  const emailScans = history.filter(h => h.type === 'email').length;
 
   // Chart data
   const pieData = [

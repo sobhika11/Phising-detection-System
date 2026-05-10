@@ -1,22 +1,33 @@
 const express = require('express');
-const router  = express.Router();
-const scanLog = [];
+const router = express.Router();
+const Scan = require('../models/Scan');
 
-router.post('/record', (req, res) => {
-  const { type, score, risk } = req.body;
-  if (!type || score === undefined || !risk) return res.status(400).json({ success: false });
-  scanLog.unshift({ type, score, risk, at: new Date().toISOString() });
-  if (scanLog.length > 500) scanLog.length = 500;
-  res.json({ success: true });
+router.get('/history', async (req, res) => {
+  try {
+    const scans = await Scan.find().sort({ at: -1 }).limit(50);
+    res.json({ success: true, history: scans });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
-router.get('/summary', (req, res) => {
-  const total  = scanLog.length;
-  const high   = scanLog.filter(s => s.risk === 'high').length;
-  const medium = scanLog.filter(s => s.risk === 'medium').length;
-  const low    = scanLog.filter(s => s.risk === 'low').length;
-  const avg    = total ? Math.round(scanLog.reduce((s,h) => s+h.score, 0) / total) : 0;
-  res.json({ success: true, total, high, medium, low, avgScore: avg, recent: scanLog.slice(0, 20) });
+router.get('/summary', async (req, res) => {
+  try {
+    const total = await Scan.countDocuments();
+    const high = await Scan.countDocuments({ risk: 'high' });
+    const medium = await Scan.countDocuments({ risk: 'medium' });
+    const low = await Scan.countDocuments({ risk: 'low' });
+    
+    // Fast arithmetic for averaging
+    const allScans = await Scan.find({}, { score: 1 });
+    const avgScore = total > 0 ? Math.round(allScans.reduce((acc, curr) => acc + curr.score, 0) / total) : 0;
+    
+    const recent = await Scan.find().sort({ at: -1 }).limit(20);
+    
+    res.json({ success: true, total, high, medium, low, avgScore, recent });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 module.exports = router;

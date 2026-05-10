@@ -37,7 +37,6 @@ function analyzeEmail(text) {
     score += w;
     findings.push({ rule: `${urlCount} Link(s)`, explanation: 'Links detected in message.', weight: w });
   }
-
   const brandMatches = BRANDS.filter(b => lower.includes(b));
   if (brandMatches.length) {
     score += 15;
