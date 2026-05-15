@@ -20,8 +20,6 @@ http://192.168.0.1/login
 
 Output:
 High Risk
-
-<<<<<<< HEAD
 ---
 
 ## ✨ Features
