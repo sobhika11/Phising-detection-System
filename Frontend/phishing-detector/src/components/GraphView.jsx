@@ -151,7 +151,7 @@ const GraphView = () => {
             nodeRelSize={6}
             linkColor={() => '#475569'}
             linkDirectionalParticles={2}
-            linkDirectionalParticleSpeed={0.005}
+            linkLabel={(link) => `first_seen: ${link.first_seen}, last_seen: ${link.last_seen}, scans: ${link.scan_count}`}
           />
         )}
       </div>

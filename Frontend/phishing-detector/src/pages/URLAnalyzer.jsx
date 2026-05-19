@@ -53,23 +53,29 @@ export default function URLAnalyzer() {
     setError('')
     
     try {
-      // Connect specifically to Orchestrator API
-      const res = await axios.post(`${ORCHESTRATOR_URL}/api/v1/scan`, { url });
+      // Connect specifically to Orchestrator API using url-checker
+      const res = await axios.post(`${ORCHESTRATOR_URL}/api/url/check`, { url });
       
-      // We map the features into the UI's expected 'findings' array dynamically
-      const formattedFindings = [];
-      if(!res.data.features?.isHttps) formattedFindings.push({ rule: 'No HTTPS', explanation: 'No secure connection.', weight: 15 });
-      if(res.data.features?.typosquatting) formattedFindings.push({ rule: 'Typosquatting Detected', explanation: 'Domain strongly resembles a known brand.', weight: 25 });
-      if(res.data.features?.suspiciousTLD) formattedFindings.push({ rule: 'Suspicious TLD', explanation: 'Domain uses a free/spam TLD.', weight: 20 });
-      if(res.data.features?.entropy > 4) formattedFindings.push({ rule: 'High Entropy', explanation: 'Random string generated domain.', weight: 15 });
+      // Map data from url-checker.js response structure
+      const aiFeatures = res.data.aiResult?.features || res.data.features || {};
+      const infrastructure = res.data.aiResult?.infrastructure || res.data.infrastructure || {};
+      
+      // Start with heuristic findings from url-checker if available
+      const formattedFindings = res.data.heuristicResult?.findings ? [...res.data.heuristicResult.findings] : [];
+      
+      // Fallback/additional mappings if not already caught by heuristics
+      if(!aiFeatures.isHttps && !formattedFindings.some(f => f.rule === 'No HTTPS')) formattedFindings.push({ rule: 'No HTTPS', explanation: 'No secure connection.', weight: 15 });
+      if(aiFeatures.typosquatting && !formattedFindings.some(f => f.rule === 'Typosquatting Detected')) formattedFindings.push({ rule: 'Typosquatting Detected', explanation: 'Domain strongly resembles a known brand.', weight: 25 });
+      if(aiFeatures.suspiciousTLD && !formattedFindings.some(f => f.rule === 'Suspicious TLD')) formattedFindings.push({ rule: 'Suspicious TLD', explanation: 'Domain uses a free/spam TLD.', weight: 20 });
+      if(aiFeatures.entropy > 4 && !formattedFindings.some(f => f.rule === 'High Entropy')) formattedFindings.push({ rule: 'High Entropy', explanation: 'Random string generated domain.', weight: 15 });
       
       setResult({
          ...res.data,
          findings: formattedFindings,
-         hostname: res.data.infrastructure?.domain || "Unknown Domain",
-         protocol: res.data.features?.isHttps ? "https:" : "http:",
-         score: res.data.riskScore, // Map back correctly to UI expectations
-         risk: res.data.risk
+         hostname: res.data.heuristicResult?.hostname || infrastructure.domain || "Unknown Domain",
+         protocol: res.data.heuristicResult?.protocol || (aiFeatures.isHttps ? "https:" : "http:"),
+         score: res.data.heuristicResult?.score || Math.round((res.data.riskScore || 0) * 100) || 0,
+         risk: res.data.heuristicResult?.risk || (res.data.riskLevel ? res.data.riskLevel.toLowerCase() : "low")
       });
     } catch (err) {
       console.error(err);
@@ -138,7 +144,7 @@ export default function URLAnalyzer() {
             {loading ? (
               <span className="flex items-center gap-2">
                 <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Analysing via AI Backend…
+                Analysing
               </span>
             ) : (
               <><Search size={18} /> Analyse URL</>
@@ -173,6 +179,44 @@ export default function URLAnalyzer() {
                   }
                 />
                 
+                {/* Redirect Analysis */}
+                {(result.resolvedUrlData || (result.originalUrl && result.finalUrl)) && (
+                  <div className="rounded-xl p-5 border-2 border-slate-200 bg-white animate-slide-up">
+                    <div className="flex justify-between items-start mb-4">
+                      <h3 className="font-bold text-lg text-slate-800 flex items-center gap-2">
+                        <Link2 size={20} className="text-slate-600" />
+                        Redirect Analysis
+                      </h3>
+                      {((result.resolvedUrlData?.originalUrl || result.originalUrl) !== (result.resolvedUrlData?.finalUrl || result.finalUrl)) && (
+                        <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-1 rounded-md border border-amber-200">
+                          Shortened URL resolved
+                        </span>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-2 text-sm">
+                      <div><span className="font-semibold text-gray-700">Original URL:</span> <span className="font-mono text-gray-600 break-all">{result.resolvedUrlData?.originalUrl || result.originalUrl}</span></div>
+                      <div><span className="font-semibold text-gray-700">Final URL:</span> <span className="font-mono text-gray-600 break-all">{result.resolvedUrlData?.finalUrl || result.finalUrl}</span></div>
+                      <div><span className="font-semibold text-gray-700">Redirect Count:</span> <span className="text-gray-600">{result.resolvedUrlData?.redirectCount || 0}</span></div>
+                    </div>
+
+                    <div className="mt-4">
+                      <p className="font-semibold text-sm text-gray-700 mb-2">Redirect Chain:</p>
+                      {(!result.resolvedUrlData?.redirectCount || result.resolvedUrlData.redirectCount === 0) ? (
+                        <p className="text-sm text-gray-500 italic">No redirect detected</p>
+                      ) : (
+                        <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                          <ol className="list-decimal list-inside space-y-1 text-sm font-mono text-gray-600">
+                            {(result.resolvedUrlData?.redirectChain || []).map((step, idx) => (
+                              <li key={idx} className="break-all">{step}</li>
+                            ))}
+                          </ol>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 {/* Neighborhood Alert */}
                 {result.neighborhoodAlert && (
                   <div className={`rounded-xl p-5 border-2 animate-slide-up ${

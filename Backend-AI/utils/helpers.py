@@ -3,8 +3,7 @@ import tldextract
 import Levenshtein
 
 POPULAR_BRANDS = ["google", "facebook", "amazon", "paypal", "microsoft", "apple", "netflix"]
-SUSPICIO
-US_TLDS = [".xyz", ".top", ".tk", ".ml", ".ga", ".cf", ".gq", ".online", ".site", ".win"]
+SUSPICIOUS_TLDS = [".xyz", ".top", ".tk", ".ml", ".ga", ".cf", ".gq", ".online", ".site", ".win"]
 
 def calculate_entropy(text: str) -> float:
     """Calculates the Shannon entropy of a string."""

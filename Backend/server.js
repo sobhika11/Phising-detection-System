@@ -15,6 +15,7 @@ checkNeo4j();
 // 1. ATTACH ROUTERS
 app.use('/api/v1/graph', graphRouter);
 app.use('/api/v1/stats', statsRouter);
+app.use('/api/url', require('./Routes/url-checker'));
 
 // 2. MAIN SCAN ROUTE
 app.post('/api/v1/scan', async (req, res) => {

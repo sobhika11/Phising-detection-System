@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 
 export const generatePDFReport = (result) => {
   const doc = new jsPDF();
@@ -51,7 +51,7 @@ export const generatePDFReport = (result) => {
   doc.text(`Final Verdict:`, 14, cursorY);
   doc.setTextColor(...riskColor);
   doc.setFont('helvetica', 'bold');
-  doc.text(result.risk.toUpperCase() + ` (Score: ${result.score}/100)`, 50, cursorY);
+  doc.text((result.risk || 'unknown').toUpperCase() + ` (Score: ${result.score || 0}/100)`, 50, cursorY);
 
   if (result.neighborhoodAlert && result.neighborhoodAlert.ip) {
     cursorY += 10;
@@ -69,14 +69,14 @@ export const generatePDFReport = (result) => {
   doc.setFont('helvetica', 'bold');
   doc.text('Key Detected Indicators', 14, cursorY);
   
-  const findingsData = result.findings.map(f => [
+  const findingsData = (result.findings || []).map(f => [
     f.rule,
     f.explanation,
     `+${f.weight}`
   ]);
 
   if (findingsData.length > 0) {
-    doc.autoTable({
+    autoTable(doc, {
       startY: cursorY + 5,
       head: [['Indicator', 'Description', 'Weight']],
       body: findingsData,
@@ -119,7 +119,7 @@ export const generatePDFReport = (result) => {
 
     if (result.neighborhoodAlert.riskyNeighborCount > 0) {
       const neighborData = result.neighborhoodAlert.riskyNeighbors.map(n => [n]);
-      doc.autoTable({
+      autoTable(doc, {
         startY: cursorY,
         head: [['Suspicious Neighbors on Same IP']],
         body: neighborData,
