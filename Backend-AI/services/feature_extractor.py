@@ -3,6 +3,7 @@ from urllib.parse import urlparse
 import tldextract
 from utils.helpers import calculate_entropy, check_typosquatting, SUSPICIOUS_TLDS
 from models.request_models import Features
+from utils.url_len import normalize_url
 def extract_features(url: str) -> Features:
     """
     Extracts phishing-specific features from a given URL.
@@ -14,18 +15,16 @@ def extract_features(url: str) -> Features:
     - typosquatting
     - matchedBrand
     """
-    # Fix missing scheme for robust parsing
-    if not url.startswith("http://") and not url.startswith("https://"):
-        url = "http://" + url
-
-    parsed_url = urlparse(url)
-    domain = parsed_url.netloc
+    
+    data = normalize_url(url)
+    url = data["url"]
+    parsed_url = data["parsed"]
+    domain = data["domain"]
     
     length = len(url)
     digitCount = sum(c.isdigit() for c in url)
     isHttps = parsed_url.scheme == "https"
     
-    # Calculate Shannon entropy on the whole URL to detect randomness (DGA)
     entropy = calculate_entropy(url)
     
     ext = tldextract.extract(url)
