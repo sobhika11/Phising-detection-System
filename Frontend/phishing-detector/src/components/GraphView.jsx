@@ -17,7 +17,8 @@ const GraphView = () => {
     setError(null);
     try {
       // Pass search and filter parameters safely to the backend
-      const res = await axios.get('http://localhost:5000/api/v1/graph/network', {
+      const ORCHESTRATOR_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+      const res = await axios.get(`${ORCHESTRATOR_URL}/api/v1/graph/network`, {
         params: {
           search: query || undefined,
           minScore: score > 0 ? score : undefined

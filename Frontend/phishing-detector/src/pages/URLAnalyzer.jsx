@@ -274,25 +274,44 @@ export default function URLAnalyzer() {
                   <div className="rounded-xl p-5 border-2 border-slate-200 bg-white animate-slide-up h-fit">
                     <h3 className="font-bold text-lg text-slate-800 mb-2 flex items-center gap-2">
                       <Monitor size={20} className="text-slate-600" />
-                      Sanitized View
+                      Sanitized View Sandbox
                     </h3>
                     <p className="text-sm text-gray-500 mb-4">
-                      A safe, headless screenshot of the destination. No direct connection was made from your browser.
+                      A safe, headless sandbox snapshot of the destination. No direct connection was made from your browser.
                     </p>
-                    {result.sanitizedView.available && result.sanitizedView.imageUrl ? (
-                      <div className="rounded-xl overflow-hidden border border-gray-200 shadow-sm relative group bg-slate-50">
-                        <img 
-                          src={result.sanitizedView.imageUrl} 
-                          alt="Sanitized preview" 
-                          className="w-full object-cover max-h-64" 
-                        />
-                        <div className="absolute inset-0 bg-black/5 pointer-events-none" />
-                      </div>
+                    {result.sanitizedView.screenshotCaptured && result.sanitizedView.screenshotPath ? (
+                      <>
+                        <div className="rounded-xl overflow-hidden border border-gray-200 shadow-sm relative group bg-slate-50 mb-4">
+                          <img 
+                            src={`${import.meta.env.VITE_AI_BACKEND_URL || 'http://localhost:8000'}${result.sanitizedView.screenshotPath}`} 
+                            alt="Sanitized preview" 
+                            className="w-full object-cover max-h-64 object-top" 
+                          />
+                          <div className="absolute inset-0 bg-black/5 pointer-events-none" />
+                        </div>
+                        <div className="bg-slate-50 rounded-lg p-3 text-xs text-slate-700 space-y-1 border border-slate-100">
+                          <p><strong>Page Title:</strong> {result.sanitizedView.pageTitle || 'N/A'}</p>
+                          <p><strong>Final URL:</strong> <span className="break-all">{result.sanitizedView.finalUrl || 'N/A'}</span></p>
+                          {result.sanitizedView.loginFormDetected && (
+                             <p className="text-red-600 font-semibold flex items-center gap-1"><ShieldAlert size={14} /> Login form detected!</p>
+                          )}
+                          {result.sanitizedView.suspiciousVisualIndicators?.length > 0 && (
+                            <div className="mt-2">
+                               <p className="font-semibold text-amber-600">Visual Indicators:</p>
+                               <ul className="list-disc list-inside text-amber-700">
+                                  {result.sanitizedView.suspiciousVisualIndicators.map((ind, i) => (
+                                     <li key={i}>{ind}</li>
+                                  ))}
+                               </ul>
+                            </div>
+                          )}
+                        </div>
+                      </>
                     ) : (
                       <div className="bg-slate-50 rounded-xl border border-slate-200 p-8 text-center text-slate-500 flex flex-col items-center justify-center min-h-[250px]">
                         <MonitorOff size={32} className="mb-3 text-slate-400" />
                         <p className="font-semibold text-slate-700">{result.sanitizedView.error || "Preview unavailable"}</p>
-                        <p className="text-xs mt-1">The host was unreachable, timed out, or blocked programmatic access.</p>
+                        <p className="text-xs mt-1">Status: {result.sanitizedView.renderingStatus}</p>
                       </div>
                     )}
                   </div>
