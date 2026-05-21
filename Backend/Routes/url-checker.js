@@ -208,8 +208,9 @@ router.post("/check", async (req, res) => {
   let riskLevel = null;
   let ip = "unknown";
   let sanitizedView = {
-    available: false,
-    imagePath: null,
+    screenshotCaptured: false,
+    screenshotPath: null,
+    renderingStatus: "unavailable",
     error: "Screenshot unavailable."
   };
 
