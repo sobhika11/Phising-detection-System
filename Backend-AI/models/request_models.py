@@ -25,8 +25,13 @@ class Features(BaseModel):
     matchedBrand: str | None = None
 
 class SanitizedView(BaseModel):
-    available: bool
-    imagePath: str | None = None
+    screenshotCaptured: bool
+    screenshotPath: str | None = None
+    renderingStatus: str
+    finalUrl: str | None = None
+    pageTitle: str | None = None
+    loginFormDetected: bool = False
+    suspiciousVisualIndicators: list[str] = []
     error: str | None = None
 
 class PredictResponse(BaseModel):
