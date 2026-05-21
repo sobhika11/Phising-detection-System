@@ -22,8 +22,9 @@ app = FastAPI(
 # Register Neo4j driver lifecycle events
 register_neo4j_events(app)
 
+import os
+os.makedirs("screenshots", exist_ok=True)
 app.mount("/screenshots", StaticFiles(directory="screenshots"), name="screenshots")
-
 @app.get("/health")
 def health_check():
     """Returns the health status of the API."""
