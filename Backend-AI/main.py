@@ -6,6 +6,7 @@ if sys.platform == 'win32':
 
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from models.request_models import PredictRequest, PredictResponse
 from services.feature_extractor import extract_features
 from services.infrastructure import check_infrastructure
@@ -20,6 +21,8 @@ app = FastAPI(
 )
 # Register Neo4j driver lifecycle events
 register_neo4j_events(app)
+
+app.mount("/screenshots", StaticFiles(directory="screenshots"), name="screenshots")
 
 @app.get("/health")
 def health_check():
