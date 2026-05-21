@@ -3,6 +3,7 @@ import ssl
 import httpx
 from urllib.parse import urlparse
 from models.request_models import Infrastructure, GeoLocation
+from utils.url_len import normalize_url
 
 async def check_infrastructure(url: str) -> Infrastructure:
     """
@@ -11,12 +12,10 @@ async def check_infrastructure(url: str) -> Infrastructure:
     - SSL certificate check
     - Geo-location of the IP
     """
-    # Pre-process URL
-    if not url.startswith("http://") and not url.startswith("https://"):
-        url = "http://" + url
-        
-    parsed_url = urlparse(url)
-    domain = parsed_url.netloc.split(':')[0] # Remove port if exists
+    data = normalize_url(url)
+    url = data["url"]
+    parsed_url = data["parsed"]
+    domain = data["domain"]
     
     ip_address = None
     ssl_valid = False
