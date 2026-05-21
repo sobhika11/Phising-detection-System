@@ -1,37 +1,14 @@
 import os
 import uuid
 import asyncio
-import socket
-import ipaddress
 from urllib.parse import urlparse
+from services.infrastructure import is_safe_url
 from models.request_models import SanitizedView
 
 SCREENSHOT_DIR = "screenshots"
 
 if not os.path.exists(SCREENSHOT_DIR):
     os.makedirs(SCREENSHOT_DIR)
-
-def is_safe_url(url: str) -> bool:
-    try:
-        parsed = urlparse(url)
-        if parsed.scheme not in ('http', 'https'):
-            return False
-        hostname = parsed.hostname
-        if not hostname:
-            return False
-        if hostname == 'localhost' or hostname.endswith('.local'):
-            return False
-        if hostname.startswith('127.') or hostname.startswith('192.168.') or hostname.startswith('10.'):
-            return False
-
-        ip_addr = socket.gethostbyname(hostname)
-        ip = ipaddress.ip_address(ip_addr)
-        if ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_multicast or ip.is_reserved:
-            return False
-            
-        return True
-    except Exception:
-        return False
 
 async def _capture_screenshot_internal(url: str, filename: str, image_path: str):
     from playwright.async_api import async_playwright

@@ -4,6 +4,7 @@ import tldextract
 from utils.helpers import calculate_entropy, check_typosquatting, SUSPICIOUS_TLDS
 from models.request_models import Features
 from utils.url_len import normalize_url
+
 def extract_features(url: str) -> Features:
     """
     Extracts phishing-specific features from a given URL.

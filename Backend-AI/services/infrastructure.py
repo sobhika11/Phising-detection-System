@@ -1,9 +1,32 @@
 import socket
 import ssl
 import httpx
+import ipaddress
 from urllib.parse import urlparse
 from models.request_models import Infrastructure, GeoLocation
 from utils.url_len import normalize_url
+
+def is_safe_url(url: str) -> bool:
+    try:
+        parsed = urlparse(url)
+        if parsed.scheme not in ('http', 'https'):
+            return False
+        hostname = parsed.hostname
+        if not hostname:
+            return False
+        if hostname == 'localhost' or hostname.endswith('.local'):
+            return False
+        if hostname.startswith('127.') or hostname.startswith('192.168.') or hostname.startswith('10.'):
+            return False
+
+        ip_addr = socket.gethostbyname(hostname)
+        ip = ipaddress.ip_address(ip_addr)
+        if ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_multicast or ip.is_reserved:
+            return False
+            
+        return True
+    except Exception:
+        return False
 
 async def check_infrastructure(url: str) -> Infrastructure:
     """
