@@ -1,14 +1,11 @@
 import re
 from urllib.parse import urlparse
 from difflib import SequenceMatcher
-
 import tldextract
-
 from utils.helpers import (
     calculate_entropy,
     SUSPICIOUS_TLDS
 )
-
 from models.request_models import Features
 from utils.url_len import normalize_url
 PHISH_KEYWORDS = [
@@ -32,13 +29,28 @@ BRANDS = [
     "microsoft",
     "leetcode",
     "codechef",
-    "Tpoint",
+    "tpoint",
     "apple",
     "facebook",
     "instagram",
     "netflix",
     "bankofamerica"
 ]
+
+LEGIT_DOMAINS = {
+    "google": ["google.com"],
+    "amazon": ["amazon.com"],
+    "paypal": ["paypal.com"],
+    "microsoft": ["microsoft.com"],
+    "apple": ["apple.com"],
+    "facebook": ["facebook.com"],
+    "instagram": ["instagram.com"],
+    "netflix": ["netflix.com"],
+    "leetcode": ["leetcode.com"],
+    "codechef": ["codechef.com"],
+    "tpoint": ["tpointtech.com"],
+    "bankofamerica": ["bankofamerica.com"]
+}
 COMMON_REPLACEMENTS = {
     "0": "o",
     "1": "l",
@@ -52,16 +64,28 @@ def normalize_word(word: str) -> str:
     for fake, real in COMMON_REPLACEMENTS.items():
         word = word.replace(fake, real)
     return word
-
-def check_typosquatting(hostname: str):
+def is_legit_domain(hostname: str) -> bool:
     """
-    Detects typosquatting attempts inside hostname/subdomains.
+    Checks whether hostname belongs to a real trusted domain.
     """
     hostname = hostname.lower()
+    for domains in LEGIT_DOMAINS.values():
+        for legit in domains:
+            if hostname == legit or hostname.endswith("." + legit):
+                return True
+    return False
+def check_typosquatting(hostname: str):
+    """
+    Detects fake domains pretending to be real brands.
+    """
+    hostname = hostname.lower()
+    if is_legit_domain(hostname):
+        return False, None
     parts = hostname.split(".")
     for part in parts:
         normalized = normalize_word(part)
         for brand in BRANDS:
+            # exact brand inside fake hostname
             if brand in normalized:
                 return True, brand
             similarity = SequenceMatcher(
@@ -73,10 +97,8 @@ def check_typosquatting(hostname: str):
                 return True, brand
     return False, None
 
+
 def extract_features(url: str) -> Features:
-    """
-    Extract phishing-related features from URL.
-    """
     data = normalize_url(url)
     url = data["url"]
     parsed_url = data["parsed"]
