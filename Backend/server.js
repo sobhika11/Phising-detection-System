@@ -2,7 +2,7 @@ const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
 const { connectMongo, driver, checkNeo4j } = require('./db');
-const graphRouter = require('./routes/graphView');
+const graphRouter = require('./Routes/graphView');
 const statsRouter = require('./Routes/stats');
 const Scan = require('./models/Scan');
 
