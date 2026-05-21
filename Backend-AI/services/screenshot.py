@@ -24,7 +24,6 @@ def is_safe_url(url: str) -> bool:
         if hostname.startswith('127.') or hostname.startswith('192.168.') or hostname.startswith('10.'):
             return False
 
-        # Attempt to resolve IP to block any private network access
         ip_addr = socket.gethostbyname(hostname)
         ip = ipaddress.ip_address(ip_addr)
         if ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_multicast or ip.is_reserved:
@@ -38,7 +37,6 @@ async def _capture_screenshot_internal(url: str, filename: str, image_path: str)
     from playwright.async_api import async_playwright
 
     async with async_playwright() as p:
-        # Optimized stable arguments - dropped '--single-process' to fix crashes
         browser = await p.chromium.launch(
             headless=True,
             args=[
@@ -61,8 +59,6 @@ async def _capture_screenshot_internal(url: str, filename: str, image_path: str)
         )
         
         page = await context.new_page()
-
-        # SSRF Routing Protections
         async def route_handler(route):
             req_url = route.request.url
             try:
@@ -79,19 +75,12 @@ async def _capture_screenshot_internal(url: str, filename: str, image_path: str)
                 await route.abort()
                 
         await page.route("**/*", route_handler)
-
-        # Step 1: Navigate using 'domcontentloaded' for a stable DOM lifecycle hook
         response = await page.goto(
             url,
             wait_until="domcontentloaded", 
             timeout=20000
         )
-
-        # Give the JS engine a clean 3 seconds to execute without network restrictions
         await page.wait_for_timeout(3000) 
-
-        # Step 2: Safe Evaluation. Wrap page reads in try/except blocks 
-        # so if a page tries to close itself, we still save the screenshot!
         title = "Unknown Title"
         final_url = url
         redirects = []
@@ -120,8 +109,6 @@ async def _capture_screenshot_internal(url: str, filename: str, image_path: str)
                 indicators.append("many external scripts")
         except Exception as eval_error:
             print(f"Context closed slightly early during metadata read: {eval_error}")
-
-        # Basic keyword check on whatever title we managed to grab
         title_lower = title.lower()
         phish_keywords = ["secure", "account", "login", "signin", "verify", "banking", "paypal", "amazon", "microsoft", "apple", "google", "update"]
         if any(kw in title_lower for kw in phish_keywords):
@@ -129,8 +116,6 @@ async def _capture_screenshot_internal(url: str, filename: str, image_path: str)
             
         if len(redirects) > 2:
             indicators.append("suspicious redirects")
-
-        # Step 3: Fast Viewport Snapshot
         try:
             await page.screenshot(
                 path=image_path,
