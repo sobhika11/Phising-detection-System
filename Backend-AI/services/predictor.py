@@ -1,5 +1,8 @@
 import os
-import joblib
+try:
+    import joblib
+except ImportError:
+    joblib = None
 from models.request_models import Features, Infrastructure
 
 # Try to load ML model if it exists
