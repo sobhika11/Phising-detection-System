@@ -23,6 +23,7 @@ class Features(BaseModel):
     suspiciousTLD: bool
     typosquatting: bool
     matchedBrand: str | None = None
+    keywordHits: int = 0
 
 class SanitizedView(BaseModel):
     screenshotCaptured: bool
