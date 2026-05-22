@@ -3,9 +3,7 @@ import { Shield, Link2, Mail, BookOpen, HelpCircle, BarChart2, ChevronRight, Loc
 
 const features = [
   { icon: Link2,      color: 'bg-blue-100 text-cyber-600',  title: 'URL Analyzer',    desc: 'Analyse any URL for phishing indicators like IP addresses, suspicious domains & more.', to: '/url-analyzer' },
-  { icon: Mail,       color: 'bg-purple-100 text-purple-600', title: 'Email Analyzer', desc: 'Paste email content to detect urgency language, scam patterns & credential harvesting.', to: '/email-analyzer' },
-  { icon: BookOpen,   color: 'bg-emerald-100 text-emerald-600', title: 'Awareness Hub',  desc: 'Learn about phishing tactics, see real vs fake examples and best practices.', to: '/awareness' },
-  { icon: HelpCircle, color: 'bg-amber-100 text-amber-600',  title: 'Quiz',            desc: 'Test your phishing detection skills with our interactive quiz and earn your score.', to: '/quiz' },
+  { icon: BookOpen,   color: 'bg-emerald-100 text-emerald-600', title: 'Awareness & Quiz Hub',  desc: 'Learn about phishing tactics, see real vs fake examples, and test your knowledge with our interactive quiz.', to: '/awareness' },
   { icon: BarChart2,  color: 'bg-red-100 text-red-600',      title: 'Dashboard',       desc: 'View aggregate scan statistics and risk-level distribution with live charts.', to: '/dashboard' },
 ]
 const stats = [
@@ -25,25 +23,16 @@ export default function HomePage() {
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyber-500/10 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl" />
 
         <div className="max-w-5xl mx-auto text-center relative z-10">
-          <div className="inline-flex items-center gap-2 bg-cyber-600/20 border border-cyber-500/30
-                          text-cyber-300 px-4 py-2 rounded-full text-sm font-medium mb-6">
-            <Shield size={14} />
-            Educational Phishing Detection Platform
-          </div>
-          <h1 className="text-5xl sm:text-6xl font-extrabold mb-6 leading-tight">
-            Detect Phishing Threats <br />
-            <span className="text-gradient">Before They Reach You</span>
+          <h1 className="text-3xl sm:text-4xl font-extrabold mb-6 leading-tight">
+            Detecting Threats & <br />
+            <span className="text-gradient">Protecting Users</span>
           </h1>
-          <p className="text-blue-200 text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-            PhishGuard analyses URLs and emails in real-time using heuristic rules, helping you
-            understand and identify phishing attacks — completely free and private.
+          <p className="text-blue-200 text-base max-w-2xl mx-auto mb-10 leading-relaxed">
+            PhishGuard analyzes suspicious URLs in real-time using advanced heuristic scanning, infrastructure intelligence, and threat detection techniques — completely free and privacy-focused.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link to="/url-analyzer" id="hero-url-btn" className="btn-primary text-base px-8 py-4">
               <Link2 size={18} /> Analyse a URL
-            </Link>
-            <Link to="/email-analyzer" id="hero-email-btn" className="btn-secondary border-blue-300 text-blue-200 hover:bg-blue-600/20 hover:text-white text-base px-8 py-4">
-              <Mail size={18} /> Check an Email
             </Link>
           </div>
         </div>
@@ -69,9 +58,9 @@ export default function HomePage() {
         </div>
         <div className="max-w-4xl mx-auto grid md:grid-cols-3 gap-8">
           {[
-            { step: '01', icon: Eye,           title: 'Input Content',    desc: 'Paste a suspect URL or email message into the analyser.' },
-            { step: '02', icon: Shield,        title: 'Heuristic Scan',   desc: 'Our engine checks 9+ rules including IP detection, keywords & more.' },
-            { step: '03', icon: AlertTriangle, title: 'Get Explanation',  desc: 'See a risk score, triggered rules, and plain-English explanations.' },
+            { step: '01', icon: Eye,           title: 'Input Content',    desc: 'Paste a suspicious URL or email message into the analyzer.' },
+            { step: '02', icon: Shield,        title: 'Intelligent Threat Scan',   desc: 'Our engine performs URL, DNS, SSL, and phishing-pattern analysis using multiple security heuristics and live infrastructure checks.' },
+            { step: '03', icon: AlertTriangle, title: 'Risk Report & Sandbox Preview',  desc: 'Get a risk score, triggered rules, infrastructure insights, and a secure sandbox screenshot of the website with plain-English explanations.' },
           ].map(s => (
             <div key={s.step} className="card text-center hover:shadow-lg transition-shadow">
               <div className="text-5xl font-black text-cyber-100 mb-4">{s.step}</div>
@@ -118,8 +107,8 @@ export default function HomePage() {
         <p className="text-blue-200 mb-8 max-w-xl mx-auto">
           No sign-up. No data stored. Purely educational and 100% private.
         </p>
-        <Link to="/quiz" id="cta-quiz-btn" className="btn-primary inline-flex mx-auto px-10 py-4 text-base">
-          <HelpCircle size={18} /> Take the Phishing Quiz
+        <Link to="/awareness" id="cta-quiz-btn" className="btn-primary inline-flex mx-auto px-10 py-4 text-base">
+          <BookOpen size={18} /> Visit the Awareness Hub
         </Link>
       </section>
     </div>

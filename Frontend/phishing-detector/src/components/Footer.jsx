@@ -15,8 +15,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-sm text-blue-300 leading-relaxed">
-              An educational platform helping users detect and understand phishing threats.
-              Stay safe, stay informed.
+              Built independently with a focus on cybersecurity and intelligent threat detection.
             </p>
           </div>
 
@@ -25,10 +24,9 @@ export default function Footer() {
             <h3 className="text-white font-semibold mb-3">Quick Links</h3>
             <ul className="space-y-2 text-sm">
               {[
+                { to: '/about', label: 'About Us' },
                 { to: '/url-analyzer', label: 'URL Analyzer' },
-                { to: '/email-analyzer', label: 'Email Analyzer' },
-                { to: '/awareness', label: 'Awareness Hub' },
-                { to: '/quiz', label: 'Phishing Quiz' },
+                { to: '/awareness', label: 'Awareness & Quiz Hub' },
               ].map(l => (
                 <li key={l.to}>
                   <Link to={l.to} className="hover:text-white transition-colors">{l.label}</Link>
@@ -36,9 +34,15 @@ export default function Footer() {
               ))}
             </ul>
           </div>
+
+          {/* Contact & Disclaimer */}
           <div>
-            <h3 className="text-white font-semibold mb-3">Disclaimer</h3>
-            <p className="text-sm text-blue-300 leading-relaxed">
+            <h3 className="text-white font-semibold mb-3">Contact & Info</h3>
+            <ul className="space-y-2 text-sm text-blue-300 mb-4">
+              <li><a href="mailto:contact@phishguard.example.com" className="hover:text-white transition-colors">contact@phishguard.example.com</a></li>
+              <li><Link to="/about" className="hover:text-white transition-colors">Learn more about us</Link></li>
+            </ul>
+            <p className="text-xs text-blue-400 leading-relaxed border-t border-navy-700 pt-4 mt-2">
               PhishGuard is purely educational. No user data or credentials are collected or stored.
               Results are heuristic-based and should not replace professional security audits.
             </p>

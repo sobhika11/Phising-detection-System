@@ -136,7 +136,7 @@ export default function Quiz() {
                 :             { label: 'Needs Improvement', color: 'text-red-600',  icon: '📚' }
 
     return (
-      <div className="min-h-screen bg-gray-50 py-16 px-4 flex items-center justify-center">
+      <div className="bg-gray-50 py-16 px-4 flex items-center justify-center">
         <div className="max-w-lg w-full card text-center animate-slide-up">
           <div className="text-6xl mb-4">{level.icon}</div>
           <h2 className="text-3xl font-black text-navy-900 mb-1">Quiz Complete!</h2>
@@ -186,7 +186,7 @@ export default function Quiz() {
   const progress = ((current) / QUESTIONS.length) * 100
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
+    <div className="bg-gray-50 py-12 px-4" id="quiz-section">
       <div className="max-w-2xl mx-auto">
 
         {/* Header */}

@@ -1,5 +1,6 @@
 import { BookOpen, ShieldCheck, AlertTriangle, CheckCircle, XCircle, ChevronDown, ChevronUp } from 'lucide-react'
 import { useState } from 'react'
+import Quiz from './Quiz'
 
 const TIPS = [
   { title: 'Check the sender\'s email address', desc: 'Phishers often use domains that look similar to real ones (e.g., support@paypa1.com instead of paypal.com). Always verify the full email address.' },
@@ -65,17 +66,18 @@ function FAQItem({ faq }) {
 
 export default function Awareness() {
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="max-w-4xl mx-auto">
+    <>
+      <div className="bg-gray-50 py-12 px-4">
+        <div className="max-w-4xl mx-auto">
 
         {/* Header */}
         <div className="text-center mb-12">
           <div className="w-16 h-16 rounded-2xl bg-emerald-600 flex items-center justify-center mx-auto mb-4">
             <BookOpen size={28} className="text-white" />
           </div>
-          <h1 className="text-4xl font-extrabold text-navy-900 mb-2">Awareness Hub</h1>
+          <h1 className="text-4xl font-extrabold text-navy-900 mb-2">Awareness & Quiz Hub</h1>
           <p className="text-gray-500 max-w-xl mx-auto">
-            Learn to identify phishing attacks, understand the tactics criminals use, and protect yourself.
+            Learn to identify phishing attacks, understand the tactics criminals use, test your knowledge, and protect yourself.
           </p>
         </div>
 
@@ -156,7 +158,11 @@ export default function Awareness() {
             {FAQS.map((faq, i) => <FAQItem key={i} faq={faq} />)}
           </div>
         </section>
+        </div>
       </div>
-    </div>
+      <div className="border-t border-gray-200">
+        <Quiz />
+      </div>
+    </>
   )
 }

@@ -4,10 +4,9 @@ import { useState } from 'react'
 
 const links = [
   { to: '/', label: 'Home' },
+  { to: '/about', label: 'About Us' },
   { to: '/url-analyzer', label: 'URL Analyzer' },
-  { to: '/email-analyzer', label: 'Email Analyzer' },
   { to: '/awareness', label: 'Awareness' },
-  { to: '/quiz', label: 'Quiz' },
   { to: '/dashboard', label: 'Dashboard' },
 ]
 
