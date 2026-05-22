@@ -2,6 +2,7 @@ import { useState } from 'react'
 import axios from 'axios'
 import { Link2, Search, Trash2, Info, Download, FileText, Monitor, MonitorOff, Mail, Copy, ShieldAlert, CheckCircle } from 'lucide-react'
 import ResultCard from '../components/ResultCard'
+import { saveScanToHistory } from '../utils/history'
 
 const ORCHESTRATOR_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 
@@ -68,14 +69,24 @@ export default function URLAnalyzer() {
       if(aiFeatures.typosquatting && !formattedFindings.some(f => f.rule === 'Typosquatting Detected')) formattedFindings.push({ rule: 'Typosquatting Detected', explanation: 'Domain strongly resembles a known brand.', weight: 25 });
       if(aiFeatures.suspiciousTLD && !formattedFindings.some(f => f.rule === 'Suspicious TLD')) formattedFindings.push({ rule: 'Suspicious TLD', explanation: 'Domain uses a free/spam TLD.', weight: 20 });
       if(aiFeatures.entropy > 4 && !formattedFindings.some(f => f.rule === 'High Entropy')) formattedFindings.push({ rule: 'High Entropy', explanation: 'Random string generated domain.', weight: 15 });
+      const finalScore = res.data.heuristicResult?.score || Math.round((res.data.riskScore || 0) * 100) || 0;
+      const finalRisk = res.data.heuristicResult?.risk || (res.data.riskLevel ? res.data.riskLevel.toLowerCase() : "low");
       
       setResult({
          ...res.data,
          findings: formattedFindings,
          hostname: res.data.heuristicResult?.hostname || infrastructure.domain || "Unknown Domain",
          protocol: res.data.heuristicResult?.protocol || (aiFeatures.isHttps ? "https:" : "http:"),
-         score: res.data.heuristicResult?.score || Math.round((res.data.riskScore || 0) * 100) || 0,
-         risk: res.data.heuristicResult?.risk || (res.data.riskLevel ? res.data.riskLevel.toLowerCase() : "low")
+         score: finalScore,
+         risk: finalRisk
+      });
+
+      saveScanToHistory({
+        type: 'url',
+        input: url,
+        score: finalScore,
+        risk: finalRisk,
+        at: new Date().toISOString()
       });
     } catch (err) {
       console.error(err);

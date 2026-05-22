@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
-import { BarChart2, ShieldX, ShieldAlert, ShieldCheck, Link2, Mail, Clock, Trash2 } from 'lucide-react'
+import { BarChart2, ShieldX, ShieldAlert, ShieldCheck, Link2, Mail, Clock, Trash2, Info } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts'
+import { loadScanHistory, clearHistory } from '../utils/history'
 
 const COLORS = { low: '#10b981', medium: '#f59e0b', high: '#ef4444' }
 
@@ -17,31 +17,25 @@ function timeAgo(ts) {
 const ORCHESTRATOR_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 
 export default function Dashboard() {
-  const [summary, setSummary] = useState(null)
+  const [history, setHistory] = useState([])
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const response = await axios.get(`${ORCHESTRATOR_URL}/api/v1/stats/summary`);
-        setSummary(response.data);
-      } catch (err) {
-         console.error("Dashboard failed to fetch live DB tracking:", err);
-      }
-    };
-    fetchStats();
+    setHistory(loadScanHistory());
   }, [])
 
-  function clearHistory() {
-    // Left as placeholder, would require a backend DELETE route
-    alert("History clearing must be implemented via backend API");
+  function handleClearHistory() {
+    clearHistory();
+    setHistory([]);
   }
 
-  if (!summary) return <div className="min-h-screen p-10 text-center animate-pulse text-gray-500">Loading live Audit Logs...</div>;
-
-  // Stats mapped from backend
-  const { total = 0, high = 0, medium = 0, low = 0, avgScore = 0, recent: history = [] } = summary || {};
-  const urlScans   = history.filter(h => h.type === 'url').length;
+  // Derive stats from local history
+  const total = history.length;
+  const urlScans = history.filter(h => h.type === 'url').length;
   const emailScans = history.filter(h => h.type === 'email').length;
+  const high = history.filter(h => h.risk === 'high' || h.risk === 'malicious').length;
+  const medium = history.filter(h => h.risk === 'medium' || h.risk === 'suspicious').length;
+  const low = history.filter(h => h.risk === 'low' || h.risk === 'safe').length;
+  const avgScore = total > 0 ? Math.round(history.reduce((acc, h) => acc + h.score, 0) / total) : 0;
 
   // Chart data
   const pieData = [
@@ -64,27 +58,27 @@ export default function Dashboard() {
         <div className="flex items-center justify-between mb-10 flex-wrap gap-4">
           <div>
             <div className="flex items-center gap-3 mb-1">
-              <div className="w-12 h-12 rounded-2xl bg-navy-900 flex items-center justify-center">
-                <BarChart2 size={22} className="text-cyber-400" />
+              <div className="w-12 h-12 rounded-2xl bg-navy-900 flex items-center justify-center shadow-lg shadow-navy-900/20">
+                <BarChart2 size={22} className="text-blue-400" />
               </div>
               <h1 className="text-3xl font-extrabold text-navy-900">Dashboard</h1>
             </div>
-            <p className="text-gray-500 ml-15">Your phishing scan history and statistics</p>
+            <p className="text-gray-500 ml-15">Your recent scans and analysis statistics</p>
           </div>
           {history.length > 0 && (
-            <button id="clear-history-btn" onClick={clearHistory}
-              className="flex items-center gap-2 text-red-500 hover:text-red-700 text-sm font-medium border border-red-200
-                         hover:border-red-400 px-4 py-2 rounded-xl transition-colors">
-              <Trash2 size={14} /> Clear History
+            <button id="clear-history-btn" onClick={handleClearHistory}
+              className="flex items-center gap-2 text-red-500 hover:text-white bg-white hover:bg-red-500 text-sm font-semibold border border-red-200
+                         px-5 py-2.5 rounded-xl transition-all shadow-sm">
+              <Trash2 size={16} /> Clear History
             </button>
           )}
         </div>
 
         {total === 0 ? (
           <div className="card text-center py-16">
-            <BarChart2 size={48} className="text-gray-200 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-gray-400 mb-2">No Scans Yet</h2>
-            <p className="text-gray-400 text-sm">Run a URL or Email analysis to see your stats here.</p>
+            <BarChart2 size={48} className="text-blue-200 mx-auto mb-4" />
+            <h2 className="text-xl font-bold text-gray-500 mb-2">No Scans Yet</h2>
+            <p className="text-gray-400 text-sm">Run a URL analysis to see your local history here.</p>
           </div>
         ) : (
           <>
@@ -197,6 +191,10 @@ export default function Dashboard() {
                   </tbody>
                 </table>
               </div>
+            </div>
+            <div className="mt-4 flex items-center justify-center gap-2 text-xs text-gray-400 bg-white border border-gray-100 rounded-xl p-3">
+              <Info size={14} className="text-blue-400" />
+              Recent scans are stored locally on your device for a privacy-focused experience.
             </div>
           </>
         )}
