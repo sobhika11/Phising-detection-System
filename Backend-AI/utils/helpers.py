@@ -36,3 +36,13 @@ def check_typosquatting(domain: str) -> tuple[bool, str | None]:
             return True, brand + "." + ext.suffix if ext.suffix else brand
             
     return False, None
+
+def verify_ssl(domain):
+    context = ssl.create_default_context()
+
+    try:
+        with socket.create_connection((domain, 443), timeout=3) as sock:
+            with context.wrap_socket(sock, server_hostname=domain):
+                return True
+    except:
+        return False
