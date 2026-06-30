@@ -419,23 +419,6 @@ router.post("/check", async (req, res) => {
     console.error("Failed to save redirect relationship:", err.message);
   }
 
-  try {
-    const Scan = require("../models/Scan");
-
-    await Scan.create({
-      type: "url",
-      input: url,
-      originalUrl: resolvedUrlData.originalUrl,
-      finalUrl: resolvedUrlData.finalUrl,
-      isShortened: resolvedUrlData.isShortened,
-      redirectChain: resolvedUrlData.redirectChain,
-      redirectCount: resolvedUrlData.redirectCount,
-      score: Math.round(riskScore * 100),
-      risk: riskLevel ? riskLevel.toLowerCase() : "low"
-    });
-  } catch (err) {
-    console.error("Failed to save MongoDB scan log:", err.message);
-  }
 
   return res.json({
     success: true,

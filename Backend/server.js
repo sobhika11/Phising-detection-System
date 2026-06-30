@@ -1,20 +1,16 @@
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
-const { connectMongo, driver, checkNeo4j } = require('./db');
+const { driver, checkNeo4j } = require('./db');
 const graphRouter = require('./Routes/graphView');
-const statsRouter = require('./Routes/stats');
-const Scan = require('./models/Scan');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-connectMongo();
 checkNeo4j();
 
 // 1. ATTACH ROUTERS
 app.use('/api/v1/graph', graphRouter);
-app.use('/api/v1/stats', statsRouter);
 app.use('/api/url', require('./Routes/url-checker'));
 
 // 2. MAIN SCAN ROUTE
@@ -57,20 +53,9 @@ app.post('/api/v1/scan', async (req, res) => {
 
     const stringRisk = riskScore >= 0.60 ? 'high' : riskScore >= 0.30 ? 'medium' : 'low';
 
-    // Save to Audit MongoDB
-    const auditRecord = await Scan.create({
-      type: 'url',
-      input: url,
-      score: riskScore * 100, // Scale 0-1 to 0-100 logic
-      risk: stringRisk,
-      verdict,
-      modelUsed
-    });
-
     res.json({
       success: true,
       url,
-      scanId: auditRecord._id,
       riskScore: riskScore * 100,
       risk: stringRisk,
       verdict,
