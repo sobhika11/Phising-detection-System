@@ -38,19 +38,23 @@ async def predict(request: PredictRequest):
     """
     url = str(request.url)
     
-    # 1. Feature Extraction
+    # Feature Extraction
     features = extract_features(url)
-    
-    # 2. Infra Lookup
-    infrastructure = await check_infrastructure(url)
-    
-    # 3. Predictor Engine (Heuristics / ML)
+
+    # Start both tasks
+    infrastructure = asyncio.create_task(check_infrastructure(url))
+    sanitizedView = asyncio.create_task(capture_screenshot(url))
+
+    # Wait for infrastructure when needed
+    infrastructure = await infrastructure
+
+    # Prediction
     riskScore, verdict, modelUsed = predict_phishing(features, infrastructure)
-    
-    # 4. Sanitized Screenshot Capture
-    # Done last or concurrently to avoid slowing down immediate rule evaluations
-    sanitizedView = await capture_screenshot(url)
-    # 5. Ingest threat data into Neo4j graph
+
+    # Wait for screenshot when needed
+    sanitizedView = await sanitizedView
+
+    # Neo4j
     ip_address = infrastructure.ip if infrastructure.ip else ""
     await ingest_threat_data(url, ip_address, riskScore)
     
