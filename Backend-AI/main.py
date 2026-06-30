@@ -56,7 +56,9 @@ async def predict(request: PredictRequest):
 
     # Neo4j
     ip_address = infrastructure.ip if infrastructure.ip else ""
-    await ingest_threat_data(url, ip_address, riskScore)
+    asyncio.create_task(
+    ingest_threat_data(url, ip_address, riskScore)
+)
     
     # Construct response
     response_data = PredictResponse(
