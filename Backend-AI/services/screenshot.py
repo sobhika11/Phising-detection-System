@@ -4,6 +4,7 @@ import asyncio
 from urllib.parse import urlparse
 from services.infrastructure import is_safe_url
 from models.request_models import SanitizedView
+import time
 
 SCREENSHOT_DIR = "screenshots"
 
@@ -94,6 +95,8 @@ async def _capture_screenshot_internal(url: str, filename: str, image_path: str)
         if len(redirects) > 2:
             indicators.append("suspicious redirects")
         try:
+            t = time.perf_counter()
+
             await page.screenshot(
                 path=image_path,
                 full_page=False,
@@ -102,6 +105,7 @@ async def _capture_screenshot_internal(url: str, filename: str, image_path: str)
             screenshot_captured = True
             status = "success"
             err_msg = None
+            print(f"Launch Browser : {time.perf_counter()-t:.3f}s")
         except Exception as screenshot_error:
             screenshot_captured = False
             status = "failed"
