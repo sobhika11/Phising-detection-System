@@ -50,7 +50,7 @@ async def predict(request: PredictRequest):
 
     # Prediction
     riskScore, verdict, modelUsed = predict_phishing(features, infrastructure)
-
+ 
     # Wait for screenshot when needed
     sanitizedView = await sanitizedView
 
